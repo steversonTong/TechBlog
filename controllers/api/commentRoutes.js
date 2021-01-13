@@ -35,4 +35,14 @@ router.delete('/:id', withAuth, async (req, res) => {
   }
 });
 
+router.get('/', async (req, res) => {
+  try {
+    await Comment.findAll({}).then((dbCommentData) => res.json(dbCommentData));
+    console.log('Comments retrieved');
+  } catch (err) {
+    console.log(err);
+    res.status(400).json(err);
+  }
+});
+
 module.exports = router;
