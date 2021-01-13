@@ -1,3 +1,4 @@
+//hi
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
@@ -20,8 +21,8 @@ const sess = {
   resave: false,
   saveUninitialized: true,
   store: new SequelizeStore({
-    db: sequelize
-  })
+    db: sequelize,
+  }),
 };
 
 app.use(session(sess));
