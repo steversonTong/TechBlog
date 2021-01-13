@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Steve Tong",
+    "date": "1/2/21",
+    "content": "First Post!!!",
+    "user_id": "1"
+  },
+  {
+    "title": "This assignment",
+    "date": "1/6/21",
+    "content": "This assignment was a long and though one.",
+    "user_id": "2"
+  },
+  {
+    "title": "Gobbillygooh",
+    "date": "1/11/21",
+    "content": "Random post that I don't know what else to write about.",
+    "user_id": "3"
+  }
+]
