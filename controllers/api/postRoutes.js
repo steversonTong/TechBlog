@@ -5,23 +5,23 @@ const sequelize = require('../../config/connection');
 
 router.get('/', withAuth, async (req, res) => {
   try {
-    await Blog.findAll({
+    await Post.findAll({
       where: {
         user_id: req.session.user_id,
       },
       include: [
         {
           model: Comment,
-          attributes: ['id', 'blog', 'data_created', 'user_id'],
+          attributes: ['id', 'post', 'data_created', 'user_id'],
           include: {
             mmodel: User,
             attributes: ['name'],
           },
         },
       ],
-    }).then((blogData) => {
-      const blogs = blogData.map((blog) => blog.get({ plain: true }));
-      res.render('dashboard', { blogs, logged_in: true });
+    }).then((postData) => {
+      const posts = postData.map((post) => post.get({ plain: true }));
+      res.render('dashboard', { posts, logged_in: true });
     });
   } catch (err) {
     console.log(err);
@@ -31,7 +31,7 @@ router.get('/', withAuth, async (req, res) => {
 
 router.get('/edit/:id', withAuth, async (req, res) => {
   try {
-    await Blog.findOne({
+    await Post.findOne({
       where: {
         id: req.params.id,
       },
@@ -46,13 +46,13 @@ router.get('/edit/:id', withAuth, async (req, res) => {
           },
         },
       ],
-    }).then((dbBlogData) => {
-      if (!dbBlogData) {
-        res.status(404).json({ message: 'No blog post found with this ID' });
+    }).then((dbPostData) => {
+      if (!dbPostData) {
+        res.status(404).json({ message: 'No post found with this ID' });
         return;
       }
-      const blog = dbBlogData.get({ plain: true });
-      res.render('edit-blog', { blog, logged_in: true });
+      const post = dbPostData.get({ plain: true });
+      res.render('edit-post', { post, logged_in: true });
     });
   } catch (err) {
     console.log(err);

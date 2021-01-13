@@ -2,14 +2,13 @@ const router = require('express').Router();
 const { User, Post, Comment } = require('../models');
 const withAuth = require('../utils/auth');
 
-// GET all blogs that a user has posted
 router.get('/', withAuth, async (req, res) => {
   try {
     await Post.findAll({
       where: {
         user_id: req.session.user_id,
       },
-      // include associated Comments
+
       include: [
         {
           model: Comment,
@@ -21,7 +20,6 @@ router.get('/', withAuth, async (req, res) => {
         },
       ],
     }).then((dbPostData) => {
-      // serialize data first
       const posts = dbPostData.map((post) => post.get({ plain: true }));
       res.render('dashboard', { posts, logged_in: true });
     });
@@ -38,7 +36,7 @@ router.get('/edit/:id', withAuth, async (req, res) => {
         id: req.params.id,
       },
       attributes: ['id', 'title', 'date_created', 'content'],
-      // include associated Comments
+
       include: [
         {
           model: User,
