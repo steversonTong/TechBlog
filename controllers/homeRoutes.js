@@ -1,56 +1,54 @@
 const router = require('express').Router();
-const { Blog, Comment, User } = require('../models');
+const { Post, Comment, User } = require('../models');
 const withAuth = require('../utils/auth');
 
 router.get('/', async (req, res) => {
   try {
-    const PostData = await Post.findAll();
-
-    const posts = PostData.map((post) => post.get({ plain: true }));
-    res.render('homepage', {
-      posts,
-      loggedIn: req.session.loggedIn,
-    });
+    await Post.findAll({ include: [{ all: true, nested: true }] }).then(
+      (dbPostData) => {
+        const posts = dbPostData.map((post) => post.get({ plain: true }));
+        res.render('homepage', {
+          posts,
+          logged_in: req.session.logged_in,
+        });
+      }
+    );
   } catch (err) {
     console.log(err);
     res.status(500).json(err);
   }
 });
 
-router.get('/Comment/:id', async (req, res) => {
+router.get('/post/:id', async (req, res) => {
   try {
-    const CommentData = await Comment.findByPk(req.params.id, {
+    await Post.findByPk(req.params.id, {
       include: [
+        {
+          model: Comment,
+          attributes: ['id', 'content', 'post_id', 'user_id', 'date_created'],
+          include: {
+            model: User,
+            attributes: ['name'],
+          },
+        },
         {
           model: User,
           attributes: ['name'],
         },
       ],
-    });
+    }).then((dbPostData) => {
+      if (!dbPostData) {
+        res.status(404).json({ message: 'No post found with this ID' });
+        return;
+      }
+      // serialize data
+      const post = dbPostData.get({ plain: true });
 
-    const comment = commentData.get({ plain: true });
-
-    res.render('comment', {
-      ...comment,
-      logged_in: req.session.logged_in,
-    });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-router.get('/post', withAuth, async (req, res) => {
-  try {
-    const userData = await User.findByPk(req.session.user_id, {
-      attributes: { exclude: ['password'] },
-      include: [{ model: Blog }],
-    });
-
-    const user = userData.get({ plain: true });
-
-    res.render('post', {
-      ...user,
-      logged_in: true,
+      // pass data to views
+      res.render('post', {
+        post,
+        logged_in: req.session.logged_in,
+      });
     });
   } catch (err) {
     console.log(err);
@@ -58,17 +56,22 @@ router.get('/post', withAuth, async (req, res) => {
   }
 });
 
-router.get('/profile', withAuth, async (req, res) => {
+router.get('/dashboard', withAuth, async (req, res) => {
   try {
-    const userData = await User.findByPk(req.session.user_id, {
-      attributes: { exclude: ['password'] },
-      include: [{ model: Blog }],
-    });
+    const user = await User.findByPk(req.session.user_id);
 
-    const user = userData.get({ plain: true });
+    const postData = await Post.findAll(
+      { where: { user_id: req.session.user_id } },
+      {
+        include: [{ model: User }],
+      }
+    );
 
-    res.render('profile', {
-      ...user,
+    const posts = postData.map((post) => post.get({ plain: true }));
+
+    res.render('dashboard', {
+      posts,
+      ...user.dataValues,
       logged_in: true,
     });
   } catch (err) {
