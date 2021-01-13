@@ -1,0 +1,47 @@
+<div class="card flex">
+  <header>
+    "{{posts.title}}" |
+    Written by: {{postUsername}}
+  </header>
+  <div class="p-4">
+    <main>
+      <p>{{posts.content}}</p>
+
+
+
+    </main>
+  </div>
+</div>
+
+<div class="card flex">
+  <header>Comments: </header>
+  <div class="p-4">
+
+    {{!-- Display existing comments here. --}}
+    {{#each posts.comments as |comment|}}
+    {{>comment-details}}
+    {{/each}}
+
+    {{#if loggedIn}}
+    {{!-- Add the ability to post a comment here --}}
+    <form class="form comment-form mt-5">
+      <div class="form-group">
+        <h4>Title:</h4>
+        <input class="form-input" type="text" id="comment-title" />
+      </div>
+      <div class="form-group">
+        <h5>Comment:</h5>
+        <input class="form-input" type="text" id="comment-content" />
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary" type="submit">Post Comment</button>
+      </div>
+    </form>
+
+    <script src="/js/comment.js"></script>
+    {{else}}
+    <a href="/login">You must login first to comment on posts.</a>
+    {{/if}}
+  </div>
+</div>
+</div>
