@@ -1,5 +1,46 @@
-{{#each posts as |post|}}
-{{> post-details}}
+<header class="d-inline-flex mx-5 my-2">
+    <h1>Welcome, {{name}}!</h1>
+</header>
+
+<div class="card mx-5">
+    <h3 class="card-header bg-success text-white">Create a New Post</h3>
+    <div class="card-body">
+        <form class="form new-post-form">
+            <div class="form-group">
+                <label for="post-title">Post Title</label>
+                <input class="form-control" placeholder="An interesting title..." type="text" id="new-post-title" />
+            </div>
+            <div class="form-group">
+                <label for="project-desc">Post Content:</label>
+                <textarea class="form-control" placeholder="A fascinating thing..." id="post-content"
+                    name="post-content"></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary post-post-btn">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mx-5 mt-5 post-list">
+    <h3 class="card-header bg-primary text-white">Your Posts</h3>
+
+    {{#if posts.length}}
+    {{#each posts as |post|}}
+    {{> dashboard-post post}}
+    <div class="d-inline-flex p-2">
+        <button type="submit" class="btn btn-outline-danger delete-post-btn" value="{{post.id}}">Delete</button>
+        <a href="/dashboard/edit/{{post.id}}" class="mx-2 edit-post-link"><button type="submit"
+                class="btn btn-outline-secondary edit-post-btn">Edit</button></a>
+    </div>
+</div>
 {{/each}}
 
-<a class="new-post" type="button">New Post</a>
+{{else}}
+<div class="card-body">
+    <div class="mx-2">
+        <h4>You have not posted yet.</h4>
+    </div>
+</div>
+{{/if}}
+</div>

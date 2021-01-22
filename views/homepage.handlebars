@@ -1,4 +1,10 @@
 {{#each posts as |post|}}
-{{!-- {{> post-details}} --}}
-{{> post}}
+
+{{> post post}}
+</div>
+{{else}}
+<div class="p-2">
+    <h2>There are currently no posts</h2>
+</div>
+
 {{/each}}

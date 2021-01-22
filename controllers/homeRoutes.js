@@ -41,10 +41,9 @@ router.get('/post/:id', async (req, res) => {
         res.status(404).json({ message: 'No post found with this ID' });
         return;
       }
-      // serialize data
+
       const post = dbPostData.get({ plain: true });
 
-      // pass data to views
       res.render('post', {
         post,
         logged_in: req.session.logged_in,
